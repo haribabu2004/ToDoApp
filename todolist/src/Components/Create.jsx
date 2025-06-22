@@ -4,6 +4,9 @@ import axios from 'axios';
 function Create(props) {
 
     const [task, setTask] = useState('');
+    const [check,setCheck] = useState('');
+
+    
 
     const handleadd = () => {
         if (task === '') {
@@ -16,14 +19,24 @@ function Create(props) {
                     props.handleAdd(result.data);
                     setTask('');
         })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    setCheck(err.response.data)
+                    
+        })
         }
     }
 
     return (
-        <div className='flex gap-3'>
-            <input type="text" placeholder='enter the task' className='border h-10 w-80 rounded-full px-4 py-2' value={task} onChange={(e) => setTask(e.target.value)} />
-            <button type="submit" className='bg-black text-white rounded-full px-4 py-2' onClick={handleadd}>add</button>
+        <div>
+            <div className='flex gap-3'>
+                <input type="text" placeholder='enter the task' className='border h-10 w-80 rounded-full px-4 py-2' value={task} onChange={(e) => setTask(e.target.value)} />
+                <button type="submit" className='bg-black text-white rounded-full px-4 py-2' onClick={handleadd}>add</button>
+            </div>
+            <div className='flex justify-center mt-4 text-red-600'>
+                {
+                    check && <p>{check}</p>
+                }
+            </div>
         </div>
     )
 }

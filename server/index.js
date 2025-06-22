@@ -12,6 +12,10 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error: ", err));
 
+app.use(express.json())
+
+app.use("/update",require("./Controller/TaskComplete"));
+
 app.post("/add", async (req, res) => {
   try {
     const task = req.body.task;
@@ -19,7 +23,7 @@ app.post("/add", async (req, res) => {
     const check = await TaskSchema.findOne({ task });
     if (check) {
       res.status(409);
-      res.json("task already exists");
+      return res.json("task already exists");
     }
 
     const newTask = await TaskSchema.create({task});
