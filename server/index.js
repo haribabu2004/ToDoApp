@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const TaskSchema = require("./Models/Task");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -12,9 +13,10 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error: ", err));
 
-app.use(express.json())
+app.use(express.json());
 
-app.use("/update",require("./Controller/TaskComplete"));
+app.use("/update", require("./Controller/TaskComplete"));
+app.use("/auth", require("./Controller/Authentication"));
 
 app.post("/add", async (req, res) => {
   try {
@@ -26,10 +28,9 @@ app.post("/add", async (req, res) => {
       return res.json("task already exists");
     }
 
-    const newTask = await TaskSchema.create({task});
+    const newTask = await TaskSchema.create({ task });
 
     res.status(201).json(newTask);
-
   } catch (err) {
     console.log(err);
   }
@@ -45,16 +46,17 @@ app.get("/get", (req, res) => {
     });
 });
 
-app.delete("/delete/:id",(req,res)=>{
-  TaskSchema.deleteOne({_id:req.params.id})
-  .then(result=>{
-    res.json(result);
-  })
-  .catch(err=>{
-    console.log(err);
-  })
-})
+app.delete("/delete/:id", (req, res) => {
+  TaskSchema.deleteOne({ _id: req.params.id })
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
-app.listen(3001, () => {
-  console.log("server is running on port 3001");
+port = process.env.port || 3002;
+app.listen(port, () => {
+  console.log(`Running in ${port}`);
 });
