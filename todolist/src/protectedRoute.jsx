@@ -1,26 +1,11 @@
-// src/ProtectedRoute.jsx
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
-import { useEffect, useState } from "react";
 
-function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(null);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setChecking(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  if (checking) {
-    return <div className="text-white text-center mt-10">Checking auth...</div>;
+export default function ProtectedRoute({ children }) {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  // if not logged in, redirect to login page
+  if (!loggedInUser) {
+    return <Navigate to="/" replace />;
   }
-
-  return user ? children : <Navigate to="/" />;
+  return children;
 }
-
-export default ProtectedRoute;

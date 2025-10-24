@@ -8,8 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+console.log("Mongo URI →", process.env.MONGO_URI);
+
 mongoose
-  .connect("mongodb://localhost:27017/TodoList")
+  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/test")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error: ", err));
 
@@ -20,15 +22,16 @@ app.use("/auth", require("./Controller/Authentication"));
 
 app.post("/add", async (req, res) => {
   try {
-    const task = req.body.task;
+    const { task, userId } = req.body.task;
 
-    const check = await TaskSchema.findOne({ task });
+    const check = await TaskSchema.findOne({ task, userId });
     if (check) {
       res.status(409);
       return res.json("task already exists");
     }
 
-    const newTask = await TaskSchema.create({ task });
+    const newTask = await TaskSchema.create({ task, userId });
+    // await newTask.save();
 
     res.status(201).json(newTask);
   } catch (err) {
@@ -36,8 +39,10 @@ app.post("/add", async (req, res) => {
   }
 });
 
-app.get("/get", (req, res) => {
-  TaskSchema.find()
+app.get("/get/:userId", (req, res) => {
+  const {userId} = req.params;
+
+  TaskSchema.find(userId)
     .then((result) => {
       res.json(result);
     })
@@ -58,5 +63,6 @@ app.delete("/delete/:id", (req, res) => {
 
 port = process.env.port || 3002;
 app.listen(port, () => {
+  // console.log("Mongo URI:", process.env.MONGO_URI);
   console.log(`Running in ${port}`);
 });

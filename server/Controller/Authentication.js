@@ -16,7 +16,7 @@ router.post("/register" , asyncHandler(async(req,res)=>{
     const userAvail =await UserSchema.findOne({email})
     // console.log(userAvail);
     if(userAvail){
-        res.status(400);
+        res.status(409);
         throw new Error("User Already Exists")
     }
 
@@ -40,11 +40,15 @@ router.post("/login", asyncHandler(async (req,res)=>{
     const{email,password} = req.body;
 
     if(!email || !password){
-        res.status(400);
+        res.status(400).json({message:"All feilds are mandatory"});
         throw new Error("All feilds are mandatory");
     }
 
     const user = await UserSchema.findOne({email});
+
+    if(!user){
+        res.status(404).json({message:"User doesn't exists"});
+    }
 
     if(user && (await bcrypt.compare(password,user.password))){
         const usertoken = jwt.sign(
@@ -59,7 +63,10 @@ router.post("/login", asyncHandler(async (req,res)=>{
             {expiresIn: "15m"}
         );
         console.log({message:`user login successful`})
-        res.status(200).json({usertoken});
+        res.status(200).json({
+            message: "Login successful",
+            token: usertoken
+        });
     }else{
         res.status(401);
         throw new Error("email or password is not valid");
