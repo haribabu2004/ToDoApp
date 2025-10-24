@@ -17,7 +17,7 @@ function Create(props) {
       alert("Please enter a task");
     } else {
       axios
-        .post("http://localhost:3001/add", {
+        .post("https://todolist-backend-0gwj.onrender.com/add", {
           task,
           userId,
         })

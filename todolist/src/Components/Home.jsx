@@ -84,7 +84,7 @@ function Home() {
   //load the tasks (TODOS)
   useEffect(() => {
     axios
-      .get("http://localhost:3001/get/${userId}")
+      .get("https://todolist-backend-0gwj.onrender.com/get/${userId}")
       .then((res) => {
         console.log(res.data);
         setTodo(res.data);
