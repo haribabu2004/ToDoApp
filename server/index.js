@@ -11,7 +11,7 @@ app.use(express.json());
 console.log("Mongo URI →", process.env.MONGO_URI);
 
 mongoose
-  .connect(process.env.MONGO_URI || "mongodb://localhost:27017/test")
+  .connect("mongodb://localhost:27017/test")
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error: ", err));
 
@@ -22,33 +22,38 @@ app.use("/auth", require("./Controller/Authentication"));
 
 app.post("/add", async (req, res) => {
   try {
-    const { task, userId } = req.body.task;
+    const { task, userId } = req.body;
 
     const check = await TaskSchema.findOne({ task, userId });
     if (check) {
       res.status(409);
+      console.log("task already exists");
       return res.json("task already exists");
     }
 
     const newTask = await TaskSchema.create({ task, userId });
     // await newTask.save();
-
+    console.log("Task added successfully");
     res.status(201).json(newTask);
   } catch (err) {
-    console.log(err);
+    console.error("Error adding task:", err);
+    res.status(500).json("Failed to add task");
   }
 });
 
-app.get("/get/:userId", (req, res) => {
-  const {userId} = req.params;
+app.get("/get/:userId", async(req, res) => {
+  try{
+    const {userId} = req.params;
+    console.log("Fetching tasks for:"+userId);
 
-  TaskSchema.find(userId)
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    const tasks = await TaskSchema.find({userId});
+    res.json(tasks);
+  }
+  catch(err){
+    console.log("Error fetching tasks:"+ err);
+    res.status(500).json({message:"Failed to fetch tasks"});
+    
+  }  
 });
 
 app.delete("/delete/:id", (req, res) => {

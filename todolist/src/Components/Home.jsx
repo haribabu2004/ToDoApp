@@ -83,8 +83,15 @@ function Home() {
 
   //load the tasks (TODOS)
   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+
+    if(!userId){
+      console.log("No userId found - user not logged in");
+      return;
+    }
+ 
     axios
-      .get("https://todolist-backend-0gwj.onrender.com/get/${userId}")
+      .get("http://localhost:3001/get/"+userId)
       .then((res) => {
         console.log(res.data);
         setTodo(res.data);

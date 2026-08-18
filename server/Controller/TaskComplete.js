@@ -17,7 +17,7 @@ router.put("/:id", async (req, res)=>{
 })
 
 router.put("/edit/:id", async(req,res)=>{
-    const {task} = req.body;
+    let {task} = req.body;
 
     TaskSchema.findByIdAndUpdate(req.params.id, {task} ,{new:true})
     .then(result => 

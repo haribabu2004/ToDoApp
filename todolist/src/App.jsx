@@ -9,13 +9,13 @@ function App(){
   return(
     <div>
       <Routes>
-        <Route path="/" element={<Login/>}/>
+        <Route path="/home" element={<Home/>}/>
         <Route path="/register" element={<Register/>}/>
         <Route 
-          path="/home" 
+          path="/" 
           element={
           // <protectedRoute>
-            <Home/>
+            <Login/>
           // </protectedRoute>
         }/>
       </Routes>
