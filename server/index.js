@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const TaskSchema = require("./Models/Task");
+const TaskSchema = require("./Models/Task.js");
 require("dotenv").config();
 
 const app = express();

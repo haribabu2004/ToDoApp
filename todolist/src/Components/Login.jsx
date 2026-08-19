@@ -16,12 +16,14 @@ function Login() {
         email,
         password,
       });
+      localStorage.setItem("token",response.data.token);
+
       console.log(response.data.message);
 
       const userId = response.data.userId || response.data.user?._id;
       if(userId){
         localStorage.setItem("userId",userId);
-        // localStorage.setItem("token",res.data.token)
+        localStorage.setItem("token",response.data.token);
         console.log("Stored userId:",response.data.userId);
         navigate("/home");
       }else{
