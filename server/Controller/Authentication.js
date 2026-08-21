@@ -65,7 +65,7 @@ router.post(
           },
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15m" }
+        { expiresIn: "1h" }
       );
       console.log({ message: `user login successful` });
       res.status(200).json({

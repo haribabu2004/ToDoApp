@@ -27,7 +27,7 @@ function Home() {
   // Save editted task
   const handleEditSave = (id) => {
     axios
-      .put(`https://todolist-backend-0gwj.onrender.com/update/edit/${id}`, { task: editTask })
+      .put(`http://localhost:3001/update/edit/${id}`, { task: editTask })
       .then((res) => {
         console.log(res);
 
@@ -45,7 +45,7 @@ function Home() {
   // delete a  task
   const handleDelete = (id) => {
     console.log(id);
-    axios.delete("https://todolist-backend-0gwj.onrender.com/delete/" + id).then((result) => {
+    axios.delete("http://localhost:3001/delete/" + id).then((result) => {
       console.log(result.data);
       setTodo(todo.filter((item) => item._id !== id));
     });
@@ -57,7 +57,7 @@ function Home() {
     const updatedCompleted = !item.completed;
 
     axios
-      .put(`https://todolist-backend-0gwj.onrender.com/update/${id}`, {
+      .put(`http://localhost:3001/update/${id}`, {
         completed: updatedCompleted,
       })
       .then((res) => {
@@ -93,7 +93,7 @@ function Home() {
     axios
       .get("http://localhost:3001/get/"+userId)
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setTodo(res.data);
       })
       .catch((err) => console.log("Fetch Failed: "+err));

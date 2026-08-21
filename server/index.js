@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const TaskSchema = require("./Models/Task.js");
+const protect = require ("./middleware/authHandler.js")
 require("dotenv").config();
 
 const app = express();
@@ -20,7 +21,7 @@ app.use(express.json());
 app.use("/update", require("./Controller/TaskComplete"));
 app.use("/auth", require("./Controller/Authentication"));
 
-app.post("/add", async (req, res) => {
+app.post("/add",protect, async (req, res) => {
   try {
     const { task, userId } = req.body;
 
@@ -44,7 +45,7 @@ app.post("/add", async (req, res) => {
 app.get("/get/:userId", async(req, res) => {
   try{
     const {userId} = req.params;
-    console.log("Fetching tasks for:"+userId);
+    // console.log("Fetching tasks for:"+userId);
 
     const tasks = await TaskSchema.find({userId});
     res.json(tasks);

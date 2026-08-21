@@ -18,17 +18,25 @@ function Create(props) {
       alert("Please enter a task");
     } else {
       await axios
-        .post("http://localhost:3001/add", {
-          task,
-          userId,
-        })
+        .post(
+          "http://localhost:3001/add",
+          {
+            task,
+            userId,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        )
         .then((result) => {
           props.handleAdd(result.data);
           setTask("");
           setErrorMsg("");
         })
         .catch((err) => {
-          console.error("Error adding task:", err);
+          console.error("Error adding task: ", err);
 
           const msg =
             err.response?.data ||
