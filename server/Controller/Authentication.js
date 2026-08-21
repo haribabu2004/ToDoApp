@@ -71,7 +71,6 @@ router.post(
       res.status(200).json({
         message: "Login successful",
         token: usertoken,
-        userId: user._id,
       });
     } else {
       res.status(401);
