@@ -18,7 +18,7 @@ mongoose
 
 app.use(express.json());
 
-app.use("/update", require("./Controller/TaskComplete"));
+app.use("/update", protect, require("./Controller/TaskComplete"));
 app.use("/auth", require("./Controller/Authentication"));
 
 app.post("/add",protect, async (req, res) => {
@@ -43,29 +43,33 @@ app.post("/add",protect, async (req, res) => {
   }
 });
 
-app.get("/get/:userId", async(req, res) => {
+// Return tasks for the authenticated user only
+app.get("/get", protect, async (req, res) => {
   try{
-    const {userId} = req.params;
-    // console.log("Fetching tasks for:"+userId);
-
+    const userId = req.user.user.id;
     const tasks = await TaskSchema.find({userId});
     res.json(tasks);
   }
   catch(err){
     console.log("Error fetching tasks:"+ err);
     res.status(500).json({message:"Failed to fetch tasks"});
-    
   }  
 });
 
-app.delete("/delete/:id", (req, res) => {
-  TaskSchema.deleteOne({ _id: req.params.id })
-    .then((result) => {
-      res.json(result);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+// Delete a task only if it belongs to the authenticated user
+app.delete("/delete/:id", protect, async (req, res) => {
+  try {
+    const userId = req.user.user.id;
+    const task = await TaskSchema.findById(req.params.id);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+    if (task.userId.toString() !== userId) return res.status(403).json({ message: "Forbidden" });
+
+    const result = await TaskSchema.deleteOne({ _id: req.params.id });
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Failed to delete task" });
+  }
 });
 
 port = process.env.port || 3002;
