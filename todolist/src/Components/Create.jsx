@@ -21,8 +21,7 @@ function Create(props) {
         .post(
           "http://localhost:3001/add",
           {
-            task,
-            userId,
+            task
           },
           {
             headers: {

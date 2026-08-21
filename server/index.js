@@ -23,7 +23,8 @@ app.use("/auth", require("./Controller/Authentication"));
 
 app.post("/add",protect, async (req, res) => {
   try {
-    const { task, userId } = req.body;
+    const { task } = req.body;
+    const userId = req.user.user.id;
 
     const check = await TaskSchema.findOne({ task, userId });
     if (check) {
