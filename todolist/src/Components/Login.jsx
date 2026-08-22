@@ -12,14 +12,27 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("https://todolist-backend-0gwj.onrender.com/auth/login", {
+      const response =await axios.post("http://localhost:3001/auth/login", {
         email,
         password,
       });
+      localStorage.setItem("token",response.data.token);
 
       console.log(response.data.message);
-      navigate("/home");
+
+      const userId = response.data.userId || response.data.user?._id;
+      if(userId){
+        localStorage.setItem("userId",userId);
+        localStorage.setItem("token",response.data.token);
+        console.log("Stored userId:",response.data.userId);
+        navigate("/home");
+      }else{
+        alert("Login successful, but userId missing from server response");
+      }
+
+      // navigate("/home");
     } catch (error) {
+      alert(error.response?.data?.message);
       console.log(
         "login failed:\n" + (error.response?.data?.message || error.message)
       );

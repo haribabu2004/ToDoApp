@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import Create from "./Create.jsx";
 import axios from "axios";
 import { MdEdit } from "react-icons/md";
@@ -26,8 +26,13 @@ function Home() {
 
   // Save editted task
   const handleEditSave = (id) => {
+    const token = localStorage.getItem("token");
     axios
-      .put(`https://todolist-backend-0gwj.onrender.com/update/edit/${id}`, { task: editTask })
+      .put(
+        `http://localhost:3001/update/edit/${id}`,
+        { task: editTask },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then((res) => {
         console.log(res);
 
@@ -45,10 +50,16 @@ function Home() {
   // delete a  task
   const handleDelete = (id) => {
     console.log(id);
-    axios.delete("https://todolist-backend-0gwj.onrender.com/delete/" + id).then((result) => {
-      console.log(result.data);
-      setTodo(todo.filter((item) => item._id !== id));
-    });
+    const token = localStorage.getItem("token");
+    axios
+      .delete("http://localhost:3001/delete/" + id, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((result) => {
+        console.log(result.data);
+        setTodo(todo.filter((item) => item._id !== id));
+      })
+      .catch((err) => console.log("Delete failed:", err));
   };
 
   // mark as completed
@@ -56,10 +67,13 @@ function Home() {
     const item = todo.find((t) => t._id === id);
     const updatedCompleted = !item.completed;
 
+    const token = localStorage.getItem("token");
     axios
-      .put(`https://todolist-backend-0gwj.onrender.com/update/${id}`, {
-        completed: updatedCompleted,
-      })
+      .put(
+        `http://localhost:3001/update/${id}`,
+        { completed: updatedCompleted },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then((res) => {
         const updatedTodo = todo.map((t) =>
           t._id === id ? { ...t, completed: updatedCompleted } : t
@@ -83,10 +97,17 @@ function Home() {
 
   //load the tasks (TODOS)
   useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if(!token){
+      console.log("No token found - user not logged in");
+      return;
+    }
+ 
     axios
-      .get("https://todolist-backend-0gwj.onrender.com/get/${userId}")
+      .get("http://localhost:3001/get", { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
-        console.log(res.data);
+        // console.log(res.data);
         setTodo(res.data);
       })
       .catch((err) => console.log("Fetch Failed: "+err));

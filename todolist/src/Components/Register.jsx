@@ -13,7 +13,7 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("https://todolist-backend-0gwj.onrender.com/auth/register", {
+      const res = await axios.post("http://localhost:3001/auth/register", {
         username,
         email,
         password,

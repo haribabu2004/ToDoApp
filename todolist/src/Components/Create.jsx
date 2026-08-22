@@ -7,6 +7,7 @@ function Create(props) {
 
   const handleadd = async () => {
     const userId = localStorage.getItem("userId");
+    // console.log(userId);
 
     if (!userId) {
       alert("User not logged in. Please log in again.");
@@ -16,20 +17,35 @@ function Create(props) {
     if (task.trim() === "") {
       alert("Please enter a task");
     } else {
-      axios
-        .post("https://todolist-backend-0gwj.onrender.com/add", {
-          task,
-          userId,
-        })
+      await axios
+        .post(
+          "http://localhost:3001/add",
+          {
+            task
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          },
+        )
         .then((result) => {
-          console.log(result.data);
           props.handleAdd(result.data);
           setTask("");
           setErrorMsg("");
         })
         .catch((err) => {
-          console.error(error);
-          setErrorMsg(error.response?.data || "Failed to add task");
+          console.error("Error adding task: ", err);
+
+          const msg =
+            err.response?.data ||
+            err.message ||
+            "Something went wrong while adding task";
+
+          setErrorMsg(msg);
+
+          // Optional popup alert
+          alert(msg);
         });
     }
   };
@@ -62,3 +78,4 @@ function Create(props) {
 }
 
 export default Create;
+
